@@ -3,11 +3,13 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     // Variables for movement (editable for debugging)
-    public float movementSpeed = 5f;
+    public float movementSpeed = 5f; // Default speed, adjustable via UI
+    public float maxMovementSpeed = 15f; // Cap for movement speed
     public float jumpHeight = 5f;
     public float maxJumpHeight = 15f;
     public string jumpStatus = "disabled";
     public bool isGrounded = false;
+    public bool canPassForceField = false;
 
     // Components
     private Rigidbody2D rb;
@@ -37,7 +39,6 @@ public class PlayerController : MonoBehaviour
         {
             moveInput = Input.GetAxisRaw("Horizontal");
             isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
-
             if (Input.GetKeyDown(KeyCode.Space) && isGrounded && jumpStatus == "enabled")
             {
                 Jump();
@@ -75,7 +76,16 @@ public class PlayerController : MonoBehaviour
         jumpStatus = newStatus;
     }
 
-    // Toggle UI state (used by Tab key)
+    public void SetForceFieldStatus(bool newStatus)
+    {
+        canPassForceField = newStatus;
+    }
+
+    public void SetMovementSpeed(float newSpeed)
+    {
+        movementSpeed = Mathf.Clamp(newSpeed, 1f, maxMovementSpeed); // Range: 1 to 10
+    }
+
     private void ToggleUI()
     {
         isUIOpen = !isUIOpen;
@@ -85,7 +95,6 @@ public class PlayerController : MonoBehaviour
         Cursor.lockState = isUIOpen ? CursorLockMode.None : CursorLockMode.Locked;
     }
 
-    // Public method for UI to close itself (used by Close button)
     public void CloseUI()
     {
         isUIOpen = false;
