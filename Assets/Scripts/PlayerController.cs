@@ -19,8 +19,10 @@ public class PlayerController : MonoBehaviour
     private float groundCheckRadius = 0.2f;
     public LayerMask groundLayer;
 
+
     // Input variables
     private float moveInput;
+    private bool isFacingRight = true;
 
     // UI control
     public GameObject debugUI;
@@ -28,6 +30,7 @@ public class PlayerController : MonoBehaviour
 
     void Start()
     {
+
         rb = GetComponent<Rigidbody2D>();
         groundCheck = transform.Find("GroundCheck");
         if (debugUI != null) debugUI.SetActive(false);
@@ -37,6 +40,8 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
+        
+
         if (!isUIOpen)
         {
             moveInput = Input.GetAxisRaw("Horizontal");
@@ -51,6 +56,16 @@ public class PlayerController : MonoBehaviour
         {
             ToggleUI();
         }
+
+        if (moveInput > 0 && !isFacingRight)
+        {
+            Flip();
+        }
+        else if (moveInput < 0 && isFacingRight)
+        {
+            Flip();
+        }
+
     }
 
     void FixedUpdate()
@@ -126,4 +141,13 @@ public class PlayerController : MonoBehaviour
             Gizmos.DrawWireSphere(groundCheck.position, groundCheckRadius);
         }
     }
+
+    void Flip()
+    {
+        isFacingRight = !isFacingRight;
+        Vector3 localScale = transform.localScale;
+        localScale.x *= -1;
+        transform.localScale = localScale;
+    }
+
 }
