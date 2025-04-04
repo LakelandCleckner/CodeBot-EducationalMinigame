@@ -3,14 +3,16 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     // Variables for movement (editable for debugging)
-    public float movementSpeed = 5f; // Default speed, adjustable via UI
-    public float maxMovementSpeed = 15f; // Cap for movement speed
+    public float movementSpeed = 5f;
+    public float maxMovementSpeed = 10f;
     public float jumpHeight = 5f;
     public float maxJumpHeight = 15f;
     public string jumpStatus = "disabled";
     public bool isGrounded = false;
     public bool canPassForceField = false;
-
+    public int powerCellsCollected = 0; // Tracks collected power cells
+    public int powerCellsRequired = 3; // Number needed to activate portal
+    public DebugUIController uiController; // Assign in Inspector
     // Components
     private Rigidbody2D rb;
     private Transform groundCheck;
@@ -83,13 +85,25 @@ public class PlayerController : MonoBehaviour
 
     public void SetMovementSpeed(float newSpeed)
     {
-        movementSpeed = Mathf.Clamp(newSpeed, 1f, maxMovementSpeed); // Range: 1 to 10
+        movementSpeed = Mathf.Clamp(newSpeed, 1f, maxMovementSpeed);
+    }
+
+    public void CollectPowerCell()
+    {
+        powerCellsCollected++;
+        DebugUIController uiController = FindObjectOfType<DebugUIController>();
+        if (uiController != null)
+            uiController.UpdatePowerCellsDisplay(powerCellsCollected);
     }
 
     private void ToggleUI()
     {
         isUIOpen = !isUIOpen;
         debugUI.SetActive(isUIOpen);
+        if (isUIOpen && uiController != null)
+        {
+            uiController.RefreshUI();
+        }
         Time.timeScale = isUIOpen ? 0f : 1f;
         Cursor.visible = isUIOpen;
         Cursor.lockState = isUIOpen ? CursorLockMode.None : CursorLockMode.Locked;

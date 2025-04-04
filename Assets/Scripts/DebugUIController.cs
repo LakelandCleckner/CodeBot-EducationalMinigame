@@ -10,8 +10,9 @@ public class DebugUIController : MonoBehaviour
     public TMP_Text jumpHeightValueText;
     public Toggle forceFieldToggle;
     public TMP_Text forceFieldValueText;
-    public Slider movementSpeedSlider; // New slider for movement speed
-    public TMP_Text movementSpeedValueText; // New text for displaying speed
+    public Slider movementSpeedSlider;
+    public TMP_Text movementSpeedValueText;
+    public TMP_Text powerCellsText;
 
     private PlayerController player;
 
@@ -22,16 +23,29 @@ public class DebugUIController : MonoBehaviour
         jumpHeightSlider.value = player.jumpHeight;
         jumpStatusInput.text = player.jumpStatus;
         forceFieldToggle.isOn = player.canPassForceField;
-        movementSpeedSlider.value = player.movementSpeed; // Sync with initial value
+        movementSpeedSlider.value = player.movementSpeed;
         UpdateJumpHeightDisplay(player.jumpHeight);
         UpdateForceFieldDisplay(player.canPassForceField);
         UpdateMovementSpeedDisplay(player.movementSpeed);
+        UpdatePowerCellsDisplay(player.powerCellsCollected);
 
         jumpHeightSlider.onValueChanged.AddListener(UpdateJumpHeight);
         jumpStatusInput.onValueChanged.AddListener(UpdateJumpStatus);
         forceFieldToggle.onValueChanged.AddListener(UpdateForceFieldStatus);
-        movementSpeedSlider.onValueChanged.AddListener(UpdateMovementSpeed); // New listener
+        movementSpeedSlider.onValueChanged.AddListener(UpdateMovementSpeed);
         closeButton.onClick.AddListener(CloseUI);
+    }
+
+    public void RefreshUI()
+    {
+        jumpHeightSlider.value = player.jumpHeight;
+        jumpStatusInput.text = player.jumpStatus;
+        forceFieldToggle.isOn = player.canPassForceField;
+        movementSpeedSlider.value = player.movementSpeed;
+        UpdateJumpHeightDisplay(player.jumpHeight);
+        UpdateForceFieldDisplay(player.canPassForceField);
+        UpdateMovementSpeedDisplay(player.movementSpeed);
+        UpdatePowerCellsDisplay(player.powerCellsCollected);
     }
 
     void UpdateJumpHeight(float value)
@@ -55,6 +69,19 @@ public class DebugUIController : MonoBehaviour
     {
         player.SetMovementSpeed(value);
         UpdateMovementSpeedDisplay(value);
+    }
+
+    public void UpdatePowerCellsDisplay(int value)
+    {
+        if (powerCellsText != null)
+        {
+            powerCellsText.text = value.ToString();
+            Debug.Log("Updated powerCellsText to: " + powerCellsText.text);
+        }
+        else
+        {
+            Debug.LogWarning("powerCellsText is not assigned in DebugUIController!");
+        }
     }
 
     void UpdateJumpHeightDisplay(float value)
